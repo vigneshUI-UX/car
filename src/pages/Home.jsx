@@ -20,7 +20,8 @@ export default function Home() {
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
       const paddedIndex = String(i).padStart(4, '0');
-      img.src = `/frames/frame-${paddedIndex}.jpg`;
+      
+      img.src = `${import.meta.env.BASE_URL}frames/frame-${paddedIndex}.jpg`;
       
       const handleLoad = () => {
         loadedCount++;
@@ -77,7 +78,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={styles.wrapper}>
+    <div style={styles.wrapper} className="animate-fade-in">
       {!imagesLoaded && (
         <div style={styles.loaderContainer}>
           <div style={styles.spinner}></div>
@@ -219,7 +220,6 @@ const styles = {
   specTitle: { fontSize: '11px', color: '#9ca3af', letterSpacing: '1px', marginBottom: '2px' },
   specValue: { fontSize: '16px', fontWeight: '700', color: '#ffffff', letterSpacing: '0.5px' },
   scrollSpacer: { height: '800vh' },
-  
   extraContentSection: { padding: '100px 8%', background: '#070707', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '120px' },
   container: { maxWidth: '1100px', margin: '0 auto', textAlign: 'center', width: '100%' },
   sectionBadge: { display: 'inline-block', padding: '6px 14px', background: 'rgba(225, 29, 72, 0.15)', border: '1px solid rgba(225, 29, 72, 0.4)', borderRadius: '20px', color: '#fb7185', fontSize: '12px', fontWeight: '600', letterSpacing: '2px', marginBottom: '16px' },
