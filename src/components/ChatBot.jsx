@@ -1,103 +1,75 @@
+import React, { useState } from 'react';
+import { MessageSquare, X, Send } from 'lucide-react';
 
-import { useState } from "react";
-import "./ChatBot.css";
-
-function ChatBot() {
+export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
-    {
-      text: "Hello! 👋 Welcome to our website. How can I help you?",
-      sender: "bot",
-    },
+    { sender: 'bot', text: 'Hello! How can I assist you with the APEX GT hypercar today?' }
   ]);
+  const [input, setInput] = useState('');
 
-  const sendMessage = () => {
-    if (!message.trim()) return;
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
 
-    const userMessage = message.trim();
-
-    setMessages((previous) => [
-      ...previous,
-      { text: userMessage, sender: "user" },
-    ]);
-
-    setMessage("");
+    const newMsgs = [...messages, { sender: 'user', text: input }];
+    setMessages(newMsgs);
+    setInput('');
 
     setTimeout(() => {
-      setMessages((previous) => [
-        ...previous,
-        {
-          text: "Thanks for your message! 😊 How can I help you today?",
-          sender: "bot",
-        },
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'bot', text: 'Thank you for your inquiry. Our APEX GT representative will get in touch with you shortly.' }
       ]);
-    }, 600);
+    }, 1000);
   };
 
   return (
-    <div className="chatbot-container">
+    <div style={styles.chatbotContainer}>
+      {!isOpen && (
+        <button onClick={() => setIsOpen(true)} style={styles.chatToggleBtn}>
+          <MessageSquare size={24} />
+        </button>
+      )}
+
       {isOpen && (
-        <div className="chat-window">
-          <div className="chat-header">
-            <div className="chat-profile">
-              <div className="chat-avatar">💬</div>
-              <div>
-                <h3>Chat Support</h3>
-                <p>Online</p>
-              </div>
-            </div>
-
-            <button
-              className="chat-close"
-              onClick={() => setIsOpen(false)}
-              aria-label="Close chat"
-            >
-              ×
-            </button>
+        <div style={styles.chatWindow}>
+          <div style={styles.chatHeader}>
+            <h4>APEX Assistant</h4>
+            <button onClick={() => setIsOpen(false)} style={styles.closeBtn}><X size={18} /></button>
           </div>
-
-          <div className="chat-messages">
-            {messages.map((item, index) => (
-              <div
-                key={index}
-                className={`message ${item.sender}`}
-              >
-                {item.text}
+          <div style={styles.chatBody}>
+            {messages.map((m, idx) => (
+              <div key={idx} style={{ ...styles.msg, alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start', background: m.sender === 'user' ? '#e11d48' : '#1f2937' }}>
+                {m.text}
               </div>
             ))}
           </div>
-
-          <form
-            className="chat-input-area"
-            onSubmit={(event) => {
-              event.preventDefault();
-              sendMessage();
-            }}
-          >
+          <form onSubmit={handleSend} style={styles.chatFooter}>
             <input
               type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
               placeholder="Type a message..."
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
+              style={styles.chatInput}
             />
-
-            <button type="submit" aria-label="Send message">
-              ➤
-            </button>
+            <button type="submit" style={styles.sendBtn}><Send size={16} /></button>
           </form>
         </div>
       )}
-
-      <button
-        className="chat-toggle"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? "Close chat" : "Open chat"}
-      >
-        {isOpen ? "×" : "☏"}
-      </button>
     </div>
   );
 }
 
-export default ChatBot;
+const styles = {
+  chatbotContainer: { position: 'fixed', bottom: '30px', right: '100px', zIndex: 9999 },
+  chatToggleBtn: { width: '70px', height: '70px', borderRadius: '50%', background: '#22c55e', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.4)' },
+  chatWindow: { width: '320px', height: '400px', background: '#0f0f12', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' },
+  chatHeader: { background: '#18181b', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#fff' },
+  closeBtn: { background: 'none', border: 'none', color: '#fff', cursor: 'pointer' },
+  chatBody: { flex: 1, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' },
+  msg: { padding: '10px 14px', borderRadius: '10px', fontSize: '0.85rem', maxWidth: '80%', color: '#fff' },
+  chatFooter: { display: 'flex', padding: '10px', background: '#18181b' },
+  chatInput: { flex: 1, padding: '8px', background: '#27272a', border: 'none', borderRadius: '6px', color: '#fff', outline: 'none', fontSize: '0.85rem' },
+  sendBtn: { background: '#e11d48', color: '#fff', border: 'none', padding: '0 12px', marginLeft: '8px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }
+};
